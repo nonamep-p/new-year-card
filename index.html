@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>New-Year Card ☕</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<style>
+  :root{
+    --cream:#F9F6F1;
+    --latte:#D7C0A8;
+    --mocha:#8C5E46;
+    --espresso:#4A3728;
+    --heart:#E76F51;
+    --speed:1.2s;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:radial-gradient(circle at 50% 50%,var(--latte),var(--espresso));
+    font-family:'Georgia',serif;
+    color:var(--espresso);
+    overflow:hidden;
+    perspective:1200px;
+  }
+  .card{
+    width:min(90vw,320px);
+    height:min(80vh,420px);
+    position:relative;
+    transform-style:preserve-3d;
+    transition:transform var(--speed) cubic-bezier(.68,-0.55,.27,1.55);
+    cursor:pointer;
+  }
+  .card.unfolded{transform:rotateY(180deg);}
+  .face{
+    position:absolute;
+    inset:0;
+    backface-visibility:hidden;
+    background:var(--cream);
+    border-radius:18px;
+    box-shadow:0 20px 40px rgba(0,0,0,.25);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:25px;
+    text-align:center;
+  }
+  .face.back{transform:rotateY(180deg);}
+  .steam{
+    position:absolute;
+    top:-60px;
+    left:50%;
+    transform:translateX(-50%);
+    width:120px;
+    height:120px;
+  }
+  .steam span{
+    position:absolute;
+    bottom:0;
+    width:50px;
+    height:50px;
+    background:rgba(255,255,255,.35);
+    border-radius:50%;
+    filter:blur(12px);
+    animation:steam 4s infinite ease-out;
+  }
+  .steam span:nth-child(1){left:0;animation-delay:0s;}
+  .steam span:nth-child(2){left:35px;animation-delay=.8s;}
+  .steam span:nth-child(3){left:70px;animation-delay=1.6s;}
+  @keyframes steam{
+    0%{transform:translateY(0) scale(.6);opacity:0;}
+    15%{opacity:1;}
+    100%{transform:translateY(-120px) scale(1.8);opacity:0;}
+  }
+  button{
+    background:var(--mocha);
+    color:var(--cream);
+    border:none;
+    padding:10px 22px;
+    margin:8px;
+    border-radius:25px;
+    font-size:clamp(14px,2.5vw,16px);
+    cursor:pointer;
+    transition:.3s;
+  }
+  button:hover{background:var(--espresso);transform:scale(1.05);}
+  .hidden{display:none!important;}
+  .page{animation:pop .6s cubic-bezier(.34,1.56,.64,1);}
+  @keyframes pop{0%{opacity:0;transform:scale(.9);}100%{opacity:1;transform:scale(1);}}
+  .meme{
+    width:90px;
+    height:90px;
+    object-fit:cover;
+    border-radius:10px;
+    margin:10px 0;
+    box-shadow:0 4px 10px rgba(0,0,0,.15);
+  }
+  .letter{
+    max-height:260px;
+    overflow-y:auto;
+    padding-right:8px;
+    font-size:clamp(13px,2.2vw,15px);
+    line-height:1.55;
+    text-align:left;
+    animation:fadeIn .8s forwards;
+    opacity:0;
+  }
+  .letter::-webkit-scrollbar{width:6px}
+  .letter::-webkit-scrollbar-thumb{background:var(--mocha);border-radius:4px}
+  .letter b{color:var(--mocha)}
+  @keyframes fadeIn{to{opacity:1}}
+  .flashText{
+    font-size:clamp(22px,4.5vw,28px);
+    font-weight:bold;
+    color:var(--mocha);
+    animation:flash 1s forwards;
+  }
+  @keyframes flash{
+    0%{opacity:0;transform:scale(.8);}
+    50%{opacity:1;transform:scale(1);}
+    99%{opacity:1;}
+    100%{opacity:0;pointer-events:none;}
+  }
+  .heart{
+    position:absolute;
+    width:20px;
+    height:20px;
+    background:var(--heart);
+    transform:rotate(45deg);
+    opacity:.8;
+    animation:float 12s infinite linear;
+  }
+  .heart::before,.heart::after{
+    content:'';position:absolute;width:20px;height:20px;
+    background:var(--heart);border-radius:50%;
+  }
+  .heart::before{top:-10px;left:0;}
+  .heart::after{left:-10px;top:0;}
+  @keyframes float{
+    0%{transform:translateY(110vh) rotate(45deg) scale(.8);}
+    100%{transform:translateY(-10vh) rotate(45deg) scale(1.2);}
+  }
+  .particle{
+    position:absolute;width:4px;height:4px;
+    background:rgba(255,255,255,.6);border-radius:50%;
+    pointer-events:none;animation:drift 20s infinite linear;
+  }
+  @keyframes drift{
+    0%{transform:translateY(110vh) translateX(0);}
+    100%{transform:translateY(-10vh) translateX(60px);}
+  }
+</style>
+</head>
+<body>
+<div class="heart" style="left:10%;animation-delay:0s;"></div>
+<div class="heart" style="left:30%;animation-delay:3s;"></div>
+<div class="heart" style="left:50%;animation-delay:6s;"></div>
+<div class="heart" style="left:70%;animation-delay:9s;"></div>
+<div class="heart" style="left:90%;animation-delay:4s;"></div>
+<div class="particle" style="left:15%;animation-delay:0s;"></div>
+<div class="particle" style="left:35%;animation-delay:5s;"></div>
+<div class="particle" style="left:55%;animation-delay:10s;"></div>
+<div class="particle" style="left:75%;animation-delay:15s;"></div>
+<div class="particle" style="left:85%;animation-delay:8s;"></div>
+
+<div class="card" id="card">
+  <div class="face front">
+    <div class="steam"><span></span><span></span><span></span></div>
+    <h2>Hello there!</h2>
+    <p>Guess the year's about to end!!!</p>
+    <button onclick="next()">Yes</button>
+  </div>
+  <div class="face back">
+    <div id="pages">
+      <!-- 1  love-meter question  -->
+      <div id="p1" class="page">
+        <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExemVldXFmb3g1MmJ5Z3Jta2pyd2RtYTEwM2NwOXYxcGM2aWZ3ampqMCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/hECJDGJs4hQjjWLqRV/giphy.gif"
+             class="meme" alt="love meme">
+        <p>I was wondering…<br>Did you love me this year as much as I did?</p>
+        <button onclick="go('p-yes-follow')">Yes</button>
+        <button onclick="go('p2-no')">No, I loved you more</button>
+      </div>
+
+      <!-- 2  "yes" follow-up  -->
+      <div id="p-yes-follow" class="page hidden">
+        <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaDdhMGkwMnFtNjdicHpmOHdyb2ZmdnUyMGt6ZzFsNjh4dml3ejFnYiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/7AzEXdIb1wyCTWJntb/giphy.gif"
+             class="meme" alt="love more">
+        <p>So you don't love me more?</p>
+        <button onclick="flashYes()">Yes</button>
+        <button onclick="flashNo()">No</button>
+      </div>
+
+      <!-- 3  flash "That's what I thought"  -->
+      <div id="p-thought" class="page hidden">
+        <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdTY1bmZkajA3bTdhNzhibmlsN2xob2Y0OGg5YndhaHhoODl4ejdobiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/91BCkba1STSmzb4UWK/giphy.gif"
+             class="meme" alt="thought">
+        <div class="flashText">That's what I thought</div>
+      </div>
+
+      <!-- 4  flash "Meanie"  -->
+      <div id="p-meanie" class="page hidden">
+        <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaDdhMGkwMnFtNjdicHpmOHdyb2ZmdnUyMGt6ZzFsNjh4dml3ejFnYiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/N92tr5rzjZx7wnRKiy/giphy.gif"
+             class="meme" alt="meanie">
+        <div class="flashText">Meanie</div>
+      </div>
+
+      <!-- 5  original "No, I loved you more" branch  -->
+      <div id="p2-no" class="page hidden">
+        <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNXA3NDVhNzJibDNzNjJuZ2VqYXNpc3dvaDk3YzVqeXVxbnM3aWJiNCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/xn8xD14FtUGQgXxST5/giphy.gif"
+             class="meme" alt="silly">
+        <p>HEHEHHE! Don’t be silly, that’s not possible.</p>
+        <button onclick="go('p2-no-1')">Understood T_T</button>
+        <button onclick="go('p2-no-2')">No, I really do</button>
+      </div>
+      <div id="p2-no-1" class="page hidden">
+        <!-- SINGLE GOOD-GIRL MEME -->
+        <img id="ggMeme" src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExMjNucXBlYnI0d25kaGViMWtrZHBnMmxvdWk2MGs2bDBxZ3prZ3lxMyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/W1hd3uXRIbddu/giphy.gif"
+             class="meme" alt="good girl">
+        <div id="goodGirlFlash" class="flashText">Good Girl!</div>
+      </div>
+      <div id="p2-no-2" class="page hidden">
+        <img src="https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3c3hrN3Y2b3RzMHFveGNneGNhNm02dWYxbDdzM2Z4aGE1Z3VkM3N0MSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/uxvy34OClDQRKx1rGm/giphy.gif"
+             class="meme" alt="mic drop">
+        <p>I said what I said.</p>
+        <button onclick="go('p3')">Ok</button>
+      </div>
+
+      <!-- 6  renewal question  -->
+      <div id="p3" class="page hidden">
+        <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaHF1MnFpNHZncDduaHRsNGt4N2hjcTV0eDFoNzlxcXh3MGx4MGlmYyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/Sm9AfJRiZofjlrkAAl/giphy.gif"
+             class="meme" alt="renew">
+        <p>Would you like to renew our relationship?</p>
+        <button onclick="showFinal()">Yes</button>
+        <button onclick="go('p3-double')">No</button>
+      </div>
+      <div id="p3-double" class="page hidden">
+        <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaHF1MnFpNHZncDduaHRsNGt4N2hjcTV0eDFoNzlxcXh3MGx4MGlmYyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/901mxGLGQN2PyCQpoc/giphy.gif"
+             class="meme" alt="sure?">
+        <p>Did I hear that right? Your hand might’ve slipped.<br>I’ll ask again:</p>
+        <button onclick="showFinal()">Yes</button>
+        <button onclick="showFinal()">Yes?</button>
+      </div>
+
+      <!-- NEW: "It was that easy?" beat before final letter -->
+      <div id="p-easy" class="page hidden">
+        <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExMGt1aTh0eWJodmcydTdpZ3dsanYxMjI4cmx6bXM3MjRyYjZ3ZHpnayZlcD12MV9naWZzX3NlYXJjaCZjdD1n/ZQOK8SFetn75GK9HEi/giphy.gif"
+             class="meme" alt="easy">
+        <p>It was that easy?</p>
+      </div>
+
+      <!-- 7  final letter  -->
+      <div id="final" class="page hidden">
+        <div id="goodGirl" class="goodGirl">Good Girl!</div>
+        <div id="letter" class="letter hidden">
+          <p><b>Happy New-Year to my lovely little cupcake!</b></p>
+          <p>Thank you for always being with me—you’re my whole world.</p>
+          <p>I can be very difficult to handle at times and very weird sometimes, but you handle it all so well.</p>
+          <p>You are brave, kind, beautiful, smart, silly, and most of all you are <i>mine</i>.</p>
+          <p>I wish this year brings more happiness than the last, and whatever problems arise we rise through them together.</p>
+          <p>I wish to be with you this year, and for my one final wish:</p>
+          <p>I would like you in my arms, getting every ounce of love you deserve and getting spoiled by me to no extent.</p>
+          <p>We move into this new year with so much to look forward to, and I’m glad it’s <b>you</b> who I’ll be with on this whole journey.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<audio id="bg" loop>
+  <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmFgU7k9n1unEiBC13yO/eizEIHWq+8+OWT" type="audio/wav">
+</audio>
+
+<script>
+const card   = document.getElementById('card');
+const pages  = document.getElementById('pages');
+const bg     = document.getElementById('bg');
+const goodGirl = document.getElementById('goodGirl');
+const letter   = document.getElementById('letter');
+
+function next(){
+  card.classList.add('unfolded');
+}
+function go(id){
+  pages.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+  if (id==='p2-no-1') autoGG();
+}
+function autoGG(){
+  setTimeout(()=>{
+    document.getElementById('ggMeme').src = 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExMjNucXBlYnI0d25kaGViMWtrZHBnMmxvdWk2MGs2bDBxZ3prZ3lxMyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/W1hd3uXRIbddu/giphy.gif';
+    document.getElementById('goodGirlFlash').classList.remove('hidden');
+  },700);
+  setTimeout(()=>go('p3'),1800);
+}
+function flashYes(){
+  go('p-thought');
+  setTimeout(()=>go('p3'),1400);
+}
+function flashNo(){
+  go('p-meanie');
+  setTimeout(()=>go('p3'),1400);
+}
+function showFinal(){
+  go('p-easy');                       // NEW: show "It was that easy?"
+  setTimeout(()=>{                    // after 1.4 s jump to final letter
+    go('final');
+    bg.volume = .25;
+    bg.play().catch(()=>{});
+    goodGirl.addEventListener('animationend', revealLetter, {once:true});
+    setTimeout(revealLetter, 1200);
+  }, 1400);
+}
+function revealLetter(){
+  goodGirl.style.display = 'none';
+  letter.classList.remove('hidden');
+}
+</script>
+</body>
+</html>
