@@ -2,14 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dear Cupcake - A New Year Wish</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Dear Cupcake - A 2025 Love Letter</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.12/typed.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500&family=Dancing+Script:wght@400;600&display=swap" rel="stylesheet">
     
     <style>
@@ -20,22 +18,18 @@
             --terracotta: #C8956D;
             --charcoal: #2C2C2C;
             --burgundy: #6B3E3E;
-            --sage: #A8B5A0;
         }
         
         body {
-            background: linear-gradient(135deg, var(--cream) 0%, var(--blush) 100%);
+            background: var(--cream);
             font-family: 'Inter', sans-serif;
             color: var(--charcoal);
             overflow-x: hidden;
         }
-        
-        .hero-bg {
-            background-image: url('./resources/hero-bg.jpg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-        }
+
+        /* Phone First Typography */
+        h1, h2, h3 { font-family: 'Playfair Display', serif; }
+        .handwriting { font-family: 'Dancing Script', cursive; }
         
         .gradient-text {
             background: linear-gradient(135deg, var(--rose-gold), var(--terracotta));
@@ -43,365 +37,256 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-        
-        .glass-effect {
-            backdrop-filter: blur(10px);
-            background: rgba(248, 246, 240, 0.8);
-            border: 1px solid rgba(212, 165, 116, 0.2);
-        }
-        
-        .reveal {
+
+        /* Scrollytelling Animations */
+        .scroll-reveal {
             opacity: 0;
-            transform: translateY(30px);
+            transform: translateY(40px);
             transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
-        
-        .reveal.active {
+        .scroll-reveal.active {
             opacity: 1;
             transform: translateY(0);
         }
-        
-        .floating {
-            animation: float 6s ease-in-out infinite;
+
+        /* Vertical Timeline for Mobile */
+        .timeline-line {
+            position: absolute;
+            left: 20px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--rose-gold), var(--terracotta));
+            opacity: 0.3;
         }
-        
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
+        .timeline-dot {
+            width: 12px;
+            height: 12px;
+            background: var(--rose-gold);
+            border-radius: 50%;
+            position: absolute;
+            left: 15px;
+            top: 24px;
+            border: 2px solid white;
+            box-shadow: 0 0 0 4px rgba(212, 165, 116, 0.2);
         }
-        
-        .typewriter {
-            border-right: 2px solid var(--rose-gold);
-            animation: blink 1s infinite;
-        }
-        
-        @keyframes blink {
-            0%, 50% { border-color: var(--rose-gold); }
-            51%, 100% { border-color: transparent; }
-        }
-        
+
+        /* Polaroid Card */
         .polaroid {
             background: white;
             padding: 12px 12px 40px 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-            transform: rotate(-2deg);
-            transition: all 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transform: rotate(-1deg);
+            transition: transform 0.3s ease;
         }
-        
-        .polaroid:hover {
-            transform: rotate(0deg) scale(1.05);
-            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+        .polaroid.active {
+            transform: rotate(0deg);
         }
-        
-        .particle-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-        }
-        
-        .content-layer {
-            position: relative;
-            z-index: 2;
-        }
-        
-        .nav-blur {
-            backdrop-filter: blur(20px);
-            background: rgba(248, 246, 240, 0.9);
-        }
-        
-        .memory-card {
+
+        /* Sticky Progress Heart */
+        .progress-heart {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
             background: white;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-        }
-        
-        .memory-card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 16px 48px rgba(0,0,0,0.15);
-        }
-        
-        .wish-preview {
-            background: linear-gradient(135deg, rgba(212, 165, 116, 0.1), rgba(200, 149, 109, 0.1));
-            border: 2px dashed var(--rose-gold);
-            border-radius: 20px;
-            transition: all 0.3s ease;
-        }
-        
-        .wish-preview:hover {
-            background: linear-gradient(135deg, rgba(212, 165, 116, 0.2), rgba(200, 149, 109, 0.2));
-            border-color: var(--terracotta);
-        }
-        
-        .calendar-grid {
-            display: grid;
-            grid-template-columns: repeat(7, 1fr);
-            gap: 8px;
-        }
-        
-        .calendar-day {
-            aspect-ratio: 1;
+            border-radius: 50%;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 8px;
-            transition: all 0.2s ease;
-            cursor: pointer;
+            font-size: 24px;
+            z-index: 100;
+            border: 2px solid var(--blush);
+        }
+        .progress-ring {
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            width: 54px;
+            height: 54px;
         }
         
-        .calendar-day:hover {
-            background: var(--rose-gold);
-            color: white;
-            transform: scale(1.1);
+        /* Hero Background */
+        .hero-section {
+            height: 100dvh; /* Dynamic height for mobile browsers */
+            background-image: url('./resources/hero-bg.jpg');
+            background-size: cover;
+            background-position: center;
         }
-        
-        .special-day {
-            background: linear-gradient(135deg, var(--rose-gold), var(--terracotta));
-            color: white;
-            font-weight: 600;
+
+        /* Wish Jar Floating Animation */
+        .floating-wish {
+            animation: float 4s ease-in-out infinite;
         }
-        
-        .handwriting {
-            font-family: 'Dancing Script', cursive;
-        }
-        
-        .serif-heading {
-            font-family: 'Playfair Display', serif;
-        }
-        
-        @media (max-width: 768px) {
-            .hero-bg {
-                background-attachment: scroll;
-            }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
         }
     </style>
 </head>
-<body>
-    <!-- Navigation -->
-    <nav class="fixed top-0 left-0 right-0 z-50 nav-blur border-b border-rose-gold/20">
-        <div class="max-w-6xl mx-auto px-6 py-4">
-            <div class="flex justify-between items-center">
-                <div class="serif-heading text-2xl font-bold gradient-text">Dear Cupcake</div>
-                <div class="hidden md:flex space-x-8">
-                    <a href="#home" class="hover:text-rose-gold transition-colors">Home</a>
-                    <a href="memories.html" class="hover:text-rose-gold transition-colors">Memories</a>
-                    <a href="wishes.html" class="hover:text-rose-gold transition-colors">Wishes</a>
-                    <a href="calendar.html" class="hover:text-rose-gold transition-colors">Future</a>
-                </div>
-            </div>
-        </div>
-    </nav>
+<body class="antialiased">
 
-    <!-- Hero Section -->
-    <section id="home" class="relative min-h-screen hero-bg flex items-center justify-center">
-        <div id="particles" class="particle-canvas"></div>
-        <div class="content-layer text-center px-6 max-w-4xl mx-auto">
-            <div class="glass-effect rounded-3xl p-12 floating">
-                <h1 class="serif-heading text-6xl md:text-8xl font-bold gradient-text mb-6">
-                    <span id="typed-text"></span>
-                </h1>
-                <p class="text-xl md:text-2xl text-burgundy mb-8 opacity-90">
-                    A love letter to welcome 2025
-                </p>
-                <div class="handwriting text-2xl text-terracotta">
-                    Scroll to begin our story...
-                </div>
+    <div class="progress-heart">
+        <svg class="progress-ring" viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="48" fill="none" stroke="var(--blush)" stroke-width="4" />
+            <circle id="progressCircle" cx="50" cy="50" r="48" fill="none" stroke="var(--terracotta)" stroke-width="4" 
+                    stroke-dasharray="301.59" stroke-dashoffset="301.59" transform="rotate(-90 50 50)" />
+        </svg>
+        <span>💝</span>
+    </div>
+
+    <section class="hero-section relative flex items-center justify-center text-center overflow-hidden">
+        <div id="particles" class="absolute inset-0 pointer-events-none"></div>
+        <div class="relative z-10 px-6 max-w-md bg-white/70 backdrop-blur-sm p-8 rounded-3xl border border-white/50 shadow-xl mx-4">
+            <h1 class="text-5xl font-bold gradient-text mb-4 leading-tight">
+                <span id="typed-text"></span>
+            </h1>
+            <p class="text-xl text-burgundy/80 font-light mt-4">A love letter to 2025</p>
+            <div class="mt-8 animate-bounce text-terracotta">
+                <p class="text-xs uppercase tracking-widest mb-2">Scroll to Open</p>
+                <svg class="w-6 h-6 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg>
             </div>
         </div>
     </section>
 
-    <!-- Opening Letter -->
-    <section class="py-32 px-6">
-        <div class="max-w-4xl mx-auto">
-            <div class="reveal text-center mb-16">
-                <h2 class="serif-heading text-5xl font-bold gradient-text mb-8">My Dearest Cupcake</h2>
-                <div class="bg-white/50 rounded-2xl p-12 shadow-xl">
-                    <div class="handwriting text-2xl text-burgundy leading-relaxed space-y-6">
-                        <p class="reveal">As the clock strikes midnight and we welcome 2025, I find myself overwhelmed with gratitude for having you in my life.</p>
-                        
-                        <p class="reveal">This past year has been filled with countless moments of joy, laughter, and love - all because of you. From our spontaneous adventures to our quiet evenings together, every moment has been precious.</p>
-                        
-                        <p class="reveal">As we step into this new year, I want you to know that my love for you grows stronger with each passing day. You are my sunshine, my anchor, and my greatest blessing.</p>
-                        
-                        <p class="reveal">May this new year bring us even closer together, filled with new adventures, deeper understanding, and endless love.</p>
-                        
-                        <div class="text-center mt-12">
-                            <img src="./resources/signature.png" alt="Signature" class="inline-block max-w-xs opacity-80">
-                        </div>
-                    </div>
-                </div>
+    <section class="py-24 px-6 max-w-lg mx-auto">
+        <div class="scroll-reveal text-center mb-12">
+            <h2 class="text-4xl font-bold gradient-text mb-6">My Dearest Cupcake</h2>
+        </div>
+        <div class="space-y-8 handwriting text-2xl text-burgundy leading-relaxed">
+            <p class="scroll-reveal">As we turn the page to 2025, I wanted to take a moment to freeze time and tell you how much you mean to me.</p>
+            <p class="scroll-reveal">This past year has been a collection of beautiful moments, big and small, that I will cherish forever.</p>
+            <p class="scroll-reveal">I've built this little corner of the internet just for us, to celebrate our memories and dream about our future.</p>
+            <div class="scroll-reveal text-center pt-8">
+                <img src="./resources/signature.png" alt="Signature" class="h-16 mx-auto opacity-80">
             </div>
         </div>
     </section>
 
-    <!-- Memory Highlights -->
-    <section class="py-32 px-6 bg-white/30">
-        <div class="max-w-6xl mx-auto">
-            <div class="reveal text-center mb-16">
-                <h2 class="serif-heading text-5xl font-bold gradient-text mb-8">Our Beautiful Journey</h2>
-                <p class="text-xl text-burgundy">Every moment with you is a treasure</p>
-            </div>
+    <section class="py-20 px-6 bg-white/50">
+        <div class="max-w-lg mx-auto relative">
+            <h2 class="text-4xl font-bold gradient-text mb-16 text-center scroll-reveal">Our Journey</h2>
             
-            <div class="splide" id="memory-carousel">
-                <div class="splide__track">
-                    <ul class="splide__list">
-                        <li class="splide__slide">
-                            <div class="polaroid mx-auto max-w-sm">
-                                <img src="./resources/couple-1.jpg" alt="Our first date" class="w-full h-64 object-cover">
-                                <div class="p-4 handwriting text-lg text-center text-burgundy">Our magical first date</div>
-                            </div>
-                        </li>
-                        <li class="splide__slide">
-                            <div class="polaroid mx-auto max-w-sm">
-                                <img src="./resources/couple-2.jpg" alt="Beach sunset" class="w-full h-64 object-cover">
-                                <div class="p-4 handwriting text-lg text-center text-burgundy">Sunset walks together</div>
-                            </div>
-                        </li>
-                        <li class="splide__slide">
-                            <div class="polaroid mx-auto max-w-sm">
-                                <img src="./resources/couple-3.jpg" alt="Romantic picnic" class="w-full h-64 object-cover">
-                                <div class="p-4 handwriting text-lg text-center text-burgundy">Our cozy picnics</div>
-                            </div>
-                        </li>
-                        <li class="splide__slide">
-                            <div class="polaroid mx-auto max-w-sm">
-                                <img src="./resources/couple-1.jpg" alt="Dancing together" class="w-full h-64 object-cover">
-                                <div class="p-4 handwriting text-lg text-center text-burgundy">Dancing under the stars</div>
-                            </div>
-                        </li>
-                        <li class="splide__slide">
-                            <div class="polaroid mx-auto max-w-sm">
-                                <img src="./resources/couple-2.jpg" alt="Cozy moments" class="w-full h-64 object-cover">
-                                <div class="p-4 handwriting text-lg text-center text-burgundy">Cuddles and warmth</div>
-                            </div>
-                        </li>
-                    </ul>
+            <div class="timeline-line"></div>
+
+            <div class="pl-12 mb-16 relative scroll-reveal">
+                <div class="timeline-dot"></div>
+                <div class="text-sm font-bold text-terracotta mb-2">March 15, 2024</div>
+                <div class="polaroid">
+                    <img src="./resources/couple-1.jpg" alt="First Date" class="w-full h-64 object-cover rounded-sm">
+                    <div class="pt-4 pb-2 text-center handwriting text-xl text-burgundy">Our First Date</div>
                 </div>
+                <p class="mt-4 text-charcoal/80 text-sm leading-relaxed">That magical evening when we first met. I knew instantly.</p>
             </div>
-            
-            <div class="text-center mt-12">
-                <a href="memories.html" class="inline-block bg-gradient-to-r from-rose-gold to-terracotta text-white px-8 py-4 rounded-full text-lg font-semibold hover:shadow-lg transition-all transform hover:scale-105">
-                    Explore Our Timeline
-                </a>
+
+            <div class="pl-12 mb-16 relative scroll-reveal">
+                <div class="timeline-dot"></div>
+                <div class="text-sm font-bold text-terracotta mb-2">July 4, 2024</div>
+                <div class="polaroid">
+                    <img src="./resources/couple-2.jpg" alt="Fireworks" class="w-full h-64 object-cover rounded-sm">
+                    <div class="pt-4 pb-2 text-center handwriting text-xl text-burgundy">Sparks Flying</div>
+                </div>
+                <p class="mt-4 text-charcoal/80 text-sm leading-relaxed">Watching fireworks, but the real magic was in your eyes.</p>
+            </div>
+
+            <div class="pl-12 mb-16 relative scroll-reveal">
+                <div class="timeline-dot"></div>
+                <div class="text-sm font-bold text-terracotta mb-2">December 25, 2024</div>
+                <div class="polaroid">
+                    <img src="./resources/couple-3.jpg" alt="Christmas" class="w-full h-64 object-cover rounded-sm">
+                    <div class="pt-4 pb-2 text-center handwriting text-xl text-burgundy">Christmas Magic</div>
+                </div>
+                <p class="mt-4 text-charcoal/80 text-sm leading-relaxed">The best gift under the tree was you by my side.</p>
             </div>
         </div>
     </section>
 
-    <!-- Wish Preview -->
-    <section class="py-32 px-6">
-        <div class="max-w-6xl mx-auto">
-            <div class="reveal text-center mb-16">
-                <h2 class="serif-heading text-5xl font-bold gradient-text mb-8">Wishes for Our Future</h2>
-                <p class="text-xl text-burgundy">Every wish is filled with love and hope</p>
-            </div>
+    <section class="py-24 px-6 relative overflow-hidden">
+        <div class="max-w-md mx-auto text-center">
+            <h2 class="text-4xl font-bold gradient-text mb-8 scroll-reveal">Wishes for You</h2>
+            <p class="text-burgundy mb-12 scroll-reveal">I've filled this jar with my hopes for your 2025...</p>
             
-            <div class="grid md:grid-cols-2 gap-12 items-center">
-                <div class="reveal">
-                    <div class="wish-preview p-8">
-                        <img src="./resources/wish-jar.png" alt="Wish Jar" class="w-full max-w-md mx-auto floating">
-                    </div>
-                </div>
+            <div class="relative w-64 h-80 mx-auto mb-16 scroll-reveal">
+                <img src="./resources/wish-jar.png" class="w-full h-full object-contain drop-shadow-2xl z-20 relative" alt="Wish Jar">
                 
-                <div class="reveal space-y-6">
-                    <div class="bg-white/60 rounded-xl p-6 shadow-lg">
-                        <h3 class="handwriting text-2xl text-burgundy mb-2">Health & Happiness</h3>
-                        <p class="text-charcoal">May you always be healthy, happy, and surrounded by love.</p>
-                    </div>
-                    
-                    <div class="bg-white/60 rounded-xl p-6 shadow-lg">
-                        <h3 class="handwriting text-2xl text-burgundy mb-2">Adventures Together</h3>
-                        <p class="text-charcoal">Let's explore new places, try new things, and create beautiful memories.</p>
-                    </div>
-                    
-                    <div class="bg-white/60 rounded-xl p-6 shadow-lg">
-                        <h3 class="handwriting text-2xl text-burgundy mb-2">Growing Stronger</h3>
-                        <p class="text-charcoal">May our love continue to grow deeper and stronger with each passing day.</p>
-                    </div>
+                <div class="absolute top-0 left-0 w-full h-full z-10">
+                    <div class="floating-wish absolute top-10 left-0 bg-white p-3 rounded-lg shadow-md text-xs text-burgundy transform -rotate-6" style="animation-delay: 0s;">Happiness</div>
+                    <div class="floating-wish absolute top-20 right-0 bg-white p-3 rounded-lg shadow-md text-xs text-burgundy transform rotate-12" style="animation-delay: 1s;">Adventure</div>
+                    <div class="floating-wish absolute bottom-20 -left-4 bg-white p-3 rounded-lg shadow-md text-xs text-burgundy transform -rotate-3" style="animation-delay: 2s;">Health</div>
+                    <div class="floating-wish absolute bottom-10 -right-4 bg-white p-3 rounded-lg shadow-md text-xs text-burgundy transform rotate-6" style="animation-delay: 1.5s;">Love</div>
                 </div>
             </div>
-            
-            <div class="text-center mt-12">
-                <a href="wishes.html" class="inline-block bg-gradient-to-r from-rose-gold to-terracotta text-white px-8 py-4 rounded-full text-lg font-semibold hover:shadow-lg transition-all transform hover:scale-105">
-                    Open Our Wish Jar
-                </a>
+
+            <div class="space-y-4 text-left">
+                <div class="bg-white p-6 rounded-2xl shadow-lg scroll-reveal border-l-4 border-rose-gold transform transition hover:scale-105">
+                    <h3 class="font-bold text-terracotta mb-2">🌟 Endless Laughter</h3>
+                    <p class="text-sm text-gray-600">May our days be filled with silly jokes and that smile I love so much.</p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-lg scroll-reveal border-l-4 border-rose-gold transform transition hover:scale-105">
+                    <h3 class="font-bold text-terracotta mb-2">🚀 Dreams Come True</h3>
+                    <p class="text-sm text-gray-600">I promise to support every goal and dream you chase this year.</p>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-lg scroll-reveal border-l-4 border-rose-gold transform transition hover:scale-105">
+                    <h3 class="font-bold text-terracotta mb-2">🏖️ New Adventures</h3>
+                    <p class="text-sm text-gray-600">Let's explore new places, taste new foods, and get lost together.</p>
+                </div>
             </div>
         </div>
     </section>
 
-    <!-- Future Promise -->
-    <section class="py-32 px-6 bg-white/30">
-        <div class="max-w-6xl mx-auto">
-            <div class="reveal text-center mb-16">
-                <h2 class="serif-heading text-5xl font-bold gradient-text mb-8">Our 2025 Adventure</h2>
-                <p class="text-xl text-burgundy">Exciting moments waiting to unfold</p>
-            </div>
+    <section class="py-24 px-6 bg-rose-gold/5">
+        <div class="max-w-md mx-auto">
+            <h2 class="text-4xl font-bold gradient-text mb-12 text-center scroll-reveal">Our 2025 Plans</h2>
             
-            <div class="grid md:grid-cols-3 gap-8 mb-12">
-                <div class="calendar-day special-day reveal">
-                    <div class="text-center">
-                        <div class="text-2xl font-bold">14</div>
-                        <div class="text-sm">Feb</div>
+            <div class="space-y-6">
+                <div class="flex items-center gap-4 scroll-reveal">
+                    <div class="flex-shrink-0 w-16 text-center">
+                        <div class="text-xs text-burgundy uppercase font-bold">Feb</div>
+                        <div class="text-2xl font-bold text-terracotta">14</div>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm flex-grow">
+                        <h3 class="font-bold text-charcoal">Valentine's Getaway</h3>
+                        <p class="text-xs text-gray-500">Mountain cabin retreat 🏔️</p>
                     </div>
                 </div>
-                <div class="calendar-day special-day reveal">
-                    <div class="text-center">
-                        <div class="text-2xl font-bold">20</div>
-                        <div class="text-sm">Mar</div>
-                    </div>
-                </div>
-                <div class="calendar-day special-day reveal">
-                    <div class="text-center">
-                        <div class="text-2xl font-bold">25</div>
-                        <div class="text-sm">Dec</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="reveal bg-white/60 rounded-2xl p-8 shadow-xl text-center">
-                <h3 class="serif-heading text-3xl font-bold gradient-text mb-4">Valentine's Day Getaway</h3>
-                <p class="text-lg text-burgundy mb-6">A romantic weekend escape to the mountains, just for us.</p>
-                <div class="handwriting text-xl text-terracotta">I can't wait to celebrate our love in such a beautiful setting!</div>
-            </div>
-            
-            <div class="text-center mt-12">
-                <a href="calendar.html" class="inline-block bg-gradient-to-r from-rose-gold to-terracotta text-white px-8 py-4 rounded-full text-lg font-semibold hover:shadow-lg transition-all transform hover:scale-105">
-                    See Our Full Calendar
-                </a>
-            </div>
-        </div>
-    </section>
 
-    <!-- Closing Message -->
-    <section class="py-32 px-6">
-        <div class="max-w-4xl mx-auto text-center">
-            <div class="reveal">
-                <h2 class="serif-heading text-6xl font-bold gradient-text mb-8">Forever Yours</h2>
-                <div class="bg-gradient-to-r from-rose-gold/20 to-terracotta/20 rounded-3xl p-12">
-                    <p class="handwriting text-3xl text-burgundy leading-relaxed mb-8">
-                        "In you, I've found my home, my heart, and my forever. Here's to another year of loving you more than words can express."
-                    </p>
-                    <div class="text-4xl mb-4">💕</div>
-                    <div class="serif-heading text-2xl font-bold gradient-text">
-                        Happy New Year, My Love
+                <div class="flex items-center gap-4 scroll-reveal">
+                    <div class="flex-shrink-0 w-16 text-center">
+                        <div class="text-xs text-burgundy uppercase font-bold">Mar</div>
+                        <div class="text-2xl font-bold text-terracotta">20</div>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm flex-grow">
+                        <h3 class="font-bold text-charcoal">Spring Picnic</h3>
+                        <p class="text-xs text-gray-500">Cherry blossom viewing 🌸</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-4 scroll-reveal">
+                    <div class="flex-shrink-0 w-16 text-center">
+                        <div class="text-xs text-burgundy uppercase font-bold">Jun</div>
+                        <div class="text-2xl font-bold text-terracotta">15</div>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm flex-grow">
+                        <h3 class="font-bold text-charcoal">Summer Vacation</h3>
+                        <p class="text-xs text-gray-500">Beach paradise escape 🏖️</p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="py-12 px-6 bg-charcoal text-cream">
-        <div class="max-w-6xl mx-auto text-center">
-            <div class="serif-heading text-2xl font-bold gradient-text mb-4">Dear Cupcake</div>
-            <p class="text-sm opacity-80">Made with love for someone very special</p>
-            <div class="mt-4 text-2xl">💝</div>
+    <section class="min-h-screen flex items-center justify-center px-6 text-center relative">
+        <div class="scroll-reveal max-w-md">
+            <h2 class="text-5xl font-bold gradient-text mb-8">Forever Yours</h2>
+            <p class="handwriting text-3xl text-burgundy leading-relaxed mb-12">
+                "Here's to another 365 days of loving you more than yesterday."
+            </p>
+            <div class="text-6xl animate-pulse">💕</div>
+            <p class="mt-12 text-sm text-gray-400">Happy New Year, my love.</p>
         </div>
-    </footer>
+    </section>
 
     <script src="main.js"></script>
 </body>
