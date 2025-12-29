@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Memories - Dear Cupcake</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/echarts/5.4.3/echarts.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500&family=Dancing+Script:wght@400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --cream: #F8F6F0;
+            --blush: #F4E6E1;
+            --rose-gold: #D4A574;
+            --terracotta: #C8956D;
+            --charcoal: #2C2C2C;
+            --burgundy: #6B3E3E;
+            --sage: #A8B5A0;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--cream) 0%, var(--blush) 100%);
+            font-family: 'Inter', sans-serif;
+            color: var(--charcoal);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, var(--rose-gold), var(--terracotta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .nav-blur {
+            backdrop-filter: blur(20px);
+            background: rgba(248, 246, 240, 0.9);
+        }
+        
+        .timeline-container {
+            position: relative;
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 2rem 0;
+        }
+        
+        .timeline {
+            display: flex;
+            gap: 2rem;
+            padding: 0 2rem;
+            min-width: max-content;
+        }
+        
+        .timeline-item {
+            flex-shrink: 0;
+            width: 300px;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .timeline-item:hover {
+            transform: translateY(-12px) scale(1.02);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        }
+        
+        .timeline-item.flipped {
+            transform: rotateY(180deg);
+        }
+        
+        .timeline-item .front,
+        .timeline-item .back {
+            backface-visibility: hidden;
+            transition: transform 0.6s;
+        }
+        
+        .timeline-item .back {
+            transform: rotateY(180deg);
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, var(--rose-gold), var(--terracotta));
+            color: white;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .timeline-item.flipped .front {
+            transform: rotateY(180deg);
+        }
+        
+        .timeline-item.flipped .back {
+            transform: rotateY(0deg);
+        }
+        
+        .memory-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+        
+        .memory-content {
+            padding: 1.5rem;
+        }
+        
+        .memory-date {
+            background: linear-gradient(135deg, var(--rose-gold), var(--terracotta));
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+        
+        .serif-heading {
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .handwriting {
+            font-family: 'Dancing Script', cursive;
+        }
+        
+        .scroll-indicator {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--rose-gold);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            animation: bounce 2s infinite;
+            cursor: pointer;
+            z-index: 50;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-10px);
+            }
+            60% {
+                transform: translateY(-5px);
+            }
+        }
+        
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--rose-gold), var(--terracotta));
+            z-index: 100;
+            transition: width 0.1s ease;
+        }
+    </style>
+</head>
+<body>
+    <!-- Progress Bar -->
+    <div class="progress-bar" id="progressBar"></div>
+    
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 nav-blur border-b border-rose-gold/20">
+        <div class="max-w-6xl mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="serif-heading text-2xl font-bold gradient-text">Our Memories</div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="index.html" class="hover:text-rose-gold transition-colors">Home</a>
+                    <a href="memories.html" class="text-rose-gold">Memories</a>
+                    <a href="wishes.html" class="hover:text-rose-gold transition-colors">Wishes</a>
+                    <a href="calendar.html" class="hover:text-rose-gold transition-colors">Future</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <section class="pt-32 pb-16 px-6">
+        <div class="max-w-6xl mx-auto text-center">
+            <h1 class="serif-heading text-6xl md:text-8xl font-bold gradient-text mb-6">
+                Our Beautiful Journey
+            </h1>
+            <p class="text-xl md:text-2xl text-burgundy mb-8">
+                Every moment with you is a precious memory
+            </p>
+            <div class="handwriting text-2xl text-terracotta">
+                Scroll through our story together...
+            </div>
+        </div>
+    </section>
+
+    <!-- Timeline -->
+    <section class="py-16">
+        <div class="timeline-container">
+            <div class="timeline" id="timeline">
+                <!-- Timeline items will be generated by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics -->
+    <section class="py-32 px-6 bg-white/30">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="serif-heading text-5xl font-bold gradient-text mb-8">Our Love Story in Numbers</h2>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-12">
+                <div class="bg-white/60 rounded-2xl p-8 shadow-xl">
+                    <h3 class="serif-heading text-3xl font-bold gradient-text mb-6">Memories Together</h3>
+                    <div id="memoriesChart" style="height: 300px;"></div>
+                </div>
+                
+                <div class="bg-white/60 rounded-2xl p-8 shadow-xl">
+                    <h3 class="serif-heading text-3xl font-bold gradient-text mb-6">Special Moments</h3>
+                    <div class="space-y-6">
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg text-burgundy">First Date</span>
+                            <span class="handwriting text-2xl text-rose-gold">💕 Magical</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg text-burgundy">I Love You's</span>
+                            <span class="handwriting text-2xl text-rose-gold">💕 Countless</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg text-burgundy">Laughs Shared</span>
+                            <span class="handwriting text-2xl text-rose-gold">💕 Infinite</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-lg text-burgundy">Dreams Together</span>
+                            <span class="handwriting text-2xl text-rose-gold">💕 Forever</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Special Message -->
+    <section class="py-32 px-6">
+        <div class="max-w-4xl mx-auto text-center">
+            <div class="bg-gradient-to-r from-rose-gold/20 to-terracotta/20 rounded-3xl p-12">
+                <h2 class="serif-heading text-5xl font-bold gradient-text mb-8">To Many More Memories</h2>
+                <p class="handwriting text-2xl text-burgundy leading-relaxed mb-8">
+                    "Every moment with you is a page in our beautiful love story. I can't wait to fill the next chapters with even more wonderful memories together."
+                </p>
+                <div class="text-4xl mb-4">📸💕</div>
+                <div class="serif-heading text-2xl font-bold gradient-text">
+                    Here's to forever, my love
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Scroll Indicator -->
+    <div class="scroll-indicator" id="scrollIndicator" title="Scroll to explore">
+        →
+    </div>
+
+    <!-- Footer -->
+    <footer class="py-12 px-6 bg-charcoal text-cream">
+        <div class="max-w-6xl mx-auto text-center">
+            <div class="serif-heading text-2xl font-bold gradient-text mb-4">Dear Cupcake</div>
+            <p class="text-sm opacity-80">Made with love for someone very special</p>
+            <div class="mt-4 text-2xl">💝</div>
+        </div>
+    </footer>
+
+    <script>
+        // Memory data
+        const memories = [
+            {
+                date: 'March 15, 2024',
+                title: 'Our First Date',
+                image: './resources/couple-1.jpg',
+                description: 'That magical evening when we first met. I knew from the moment I saw you that you were someone special.',
+                category: 'Firsts'
+            },
+            {
+                date: 'April 2, 2024',
+                title: 'First "I Love You"',
+                image: './resources/couple-2.jpg',
+                description: 'The moment I gathered the courage to tell you how I truly felt. Your smile lit up my entire world.',
+                category: 'Milestones'
+            },
+            {
+                date: 'May 20, 2024',
+                title: 'Our First Trip',
+                image: './resources/couple-3.jpg',
+                description: 'Exploring new places together, hand in hand. Every adventure with you is unforgettable.',
+                category: 'Adventures'
+            },
+            {
+                date: 'June 10, 2024',
+                title: 'Dancing Under Stars',
+                image: './resources/couple-1.jpg',
+                description: 'That spontaneous night of dancing in the moonlight. You looked like an angel in the starlight.',
+                category: 'Romantic'
+            },
+            {
+                date: 'July 4, 2024',
+                title: 'Fireworks & Kisses',
+                image: './resources/couple-2.jpg',
+                description: 'Watching fireworks together, but the real magic was in your eyes reflecting the colors.',
+                category: 'Celebrations'
+            },
+            {
+                date: 'August 15, 2024',
+                title: 'Beach Day Adventure',
+                image: './resources/couple-3.jpg',
+                description: 'Building sandcastles and collecting seashells. Every moment with you feels like a fairytale.',
+                category: 'Adventures'
+            },
+            {
+                date: 'September 22, 2024',
+                title: 'Cozy Movie Night',
+                image: './resources/couple-1.jpg',
+                description: 'Snuggled up together, sharing popcorn and stealing kisses during the boring parts.',
+                category: 'Cozy'
+            },
+            {
+                date: 'October 31, 2024',
+                title: 'Halloween Fun',
+                image: './resources/couple-2.jpg',
+                description: 'Dressing up together and laughing at our silly costumes. You make every holiday special.',
+                category: 'Celebrations'
+            },
+            {
+                date: 'November 28, 2024',
+                title: 'Thanksgiving Together',
+                image: './resources/couple-3.jpg',
+                description: 'Grateful for you every single day, but especially thankful to spend this day with you.',
+                category: 'Family'
+            },
+            {
+                date: 'December 25, 2024',
+                title: 'Christmas Magic',
+                image: './resources/couple-1.jpg',
+                description: 'The most wonderful time of the year became even more magical with you by my side.',
+                category: 'Celebrations'
+            }
+        ];
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            generateTimeline();
+            initChart();
+            initScrollEffects();
+            initProgressBar();
+        });
+
+        // Generate timeline
+        function generateTimeline() {
+            const timeline = document.getElementById('timeline');
+            
+            memories.forEach((memory, index) => {
+                const timelineItem = document.createElement('div');
+                timelineItem.className = 'timeline-item';
+                timelineItem.innerHTML = `
+                    <div class="front">
+                        <img src="${memory.image}" alt="${memory.title}" class="memory-image">
+                        <div class="memory-content">
+                            <div class="memory-date">${memory.date}</div>
+                            <h3 class="serif-heading text-xl font-bold text-burgundy mb-2">${memory.title}</h3>
+                            <p class="text-sm text-charcoal mb-3">${memory.description.substring(0, 80)}...</p>
+                            <div class="text-xs text-rose-gold font-semibold">Click to read more</div>
+                        </div>
+                    </div>
+                    <div class="back">
+                        <h3 class="serif-heading text-2xl font-bold mb-4">${memory.title}</h3>
+                        <p class="handwriting text-lg leading-relaxed mb-4">${memory.description}</p>
+                        <div class="text-sm opacity-80">${memory.date}</div>
+                        <div class="text-xs mt-2">💕 Click to flip back</div>
+                    </div>
+                `;
+                
+                timelineItem.addEventListener('click', function() {
+                    this.classList.toggle('flipped');
+                });
+                
+                timeline.appendChild(timelineItem);
+                
+                // Animate in with delay
+                setTimeout(() => {
+                    timelineItem.style.opacity = '0';
+                    timelineItem.style.transform = 'translateY(30px)';
+                    timelineItem.style.transition = 'all 0.6s ease';
+                    
+                    setTimeout(() => {
+                        timelineItem.style.opacity = '1';
+                        timelineItem.style.transform = 'translateY(0)';
+                    }, 100);
+                }, index * 150);
+            });
+        }
+
+        // Initialize chart
+        function initChart() {
+            const chartDom = document.getElementById('memoriesChart');
+            const myChart = echarts.init(chartDom);
+            
+            const categories = {};
+            memories.forEach(memory => {
+                categories[memory.category] = (categories[memory.category] || 0) + 1;
+            });
+            
+            const option = {
+                tooltip: {
+                    trigger: 'item',
+                    formatter: '{b}: {c} memories'
+                },
+                series: [{
+                    type: 'pie',
+                    radius: ['40%', '70%'],
+                    avoidLabelOverlap: false,
+                    itemStyle: {
+                        borderRadius: 10,
+                        borderColor: '#fff',
+                        borderWidth: 2
+                    },
+                    label: {
+                        show: false,
+                        position: 'center'
+                    },
+                    emphasis: {
+                        label: {
+                            show: true,
+                            fontSize: '18',
+                            fontWeight: 'bold'
+                        }
+                    },
+                    labelLine: {
+                        show: false
+                    },
+                    data: Object.entries(categories).map(([name, value]) => ({
+                        value,
+                        name,
+                        itemStyle: {
+                            color: name === 'Firsts' ? '#D4A574' :
+                                   name === 'Milestones' ? '#C8956D' :
+                                   name === 'Adventures' ? '#A8B5A0' :
+                                   name === 'Romantic' ? '#F4E6E1' :
+                                   name === 'Celebrations' ? '#6B3E3E' :
+                                   name === 'Cozy' ? '#E8D5C4' : '#D4A574'
+                        }
+                    }))
+                }]
+            };
+            
+            myChart.setOption(option);
+            
+            // Resize chart on window resize
+            window.addEventListener('resize', () => {
+                myChart.resize();
+            });
+        }
+
+        // Scroll effects
+        function initScrollEffects() {
+            const scrollIndicator = document.getElementById('scrollIndicator');
+            
+            scrollIndicator.addEventListener('click', () => {
+                window.scrollBy({ top: window.innerHeight, behavior: 'smooth' });
+            });
+            
+            // Hide scroll indicator when scrolled
+            window.addEventListener('scroll', () => {
+                if (window.pageYOffset > 100) {
+                    scrollIndicator.style.opacity = '0.5';
+                } else {
+                    scrollIndicator.style.opacity = '1';
+                }
+            });
+        }
+
+        // Progress bar
+        function initProgressBar() {
+            const progressBar = document.getElementById('progressBar');
+            
+            window.addEventListener('scroll', () => {
+                const scrolled = window.pageYOffset;
+                const maxHeight = document.documentElement.scrollHeight - window.innerHeight;
+                const progress = (scrolled / maxHeight) * 100;
+                progressBar.style.width = progress + '%';
+            });
+        }
+    </script>
+</body>
+</html>

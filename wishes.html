@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Wishes - Dear Cupcake</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500&family=Dancing+Script:wght@400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --cream: #F8F6F0;
+            --blush: #F4E6E1;
+            --rose-gold: #D4A574;
+            --terracotta: #C8956D;
+            --charcoal: #2C2C2C;
+            --burgundy: #6B3E3E;
+            --sage: #A8B5A0;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--cream) 0%, var(--blush) 100%);
+            font-family: 'Inter', sans-serif;
+            color: var(--charcoal);
+            overflow-x: hidden;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, var(--rose-gold), var(--terracotta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .nav-blur {
+            backdrop-filter: blur(20px);
+            background: rgba(248, 246, 240, 0.9);
+        }
+        
+        .wish-jar-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            height: 600px;
+            margin: 0 auto;
+        }
+        
+        .wish-paper {
+            position: absolute;
+            width: 80px;
+            height: 60px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            text-align: center;
+            padding: 8px;
+            color: var(--burgundy);
+            font-weight: 500;
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        
+        .wish-paper.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .wish-paper:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            z-index: 10;
+        }
+        
+        .wish-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .wish-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .wish-modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: scale(0.8);
+            transition: transform 0.3s ease;
+        }
+        
+        .wish-modal.active .wish-modal-content {
+            transform: scale(1);
+        }
+        
+        .floating-wish {
+            animation: float-wish 4s ease-in-out infinite;
+        }
+        
+        @keyframes float-wish {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(2deg); }
+        }
+        
+        .jar-glow {
+            box-shadow: 0 0 50px rgba(212, 165, 116, 0.3);
+            animation: glow 3s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { box-shadow: 0 0 30px rgba(212, 165, 116, 0.2); }
+            to { box-shadow: 0 0 70px rgba(212, 165, 116, 0.4); }
+        }
+        
+        .serif-heading {
+            font-family: 'Playfair Display', serif;
+        }
+        
+        .handwriting {
+            font-family: 'Dancing Script', cursive;
+        }
+        
+        .wish-counter {
+            background: linear-gradient(135deg, var(--rose-gold), var(--terracotta));
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 50px;
+            font-size: 1.25rem;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 2rem;
+        }
+        
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 nav-blur border-b border-rose-gold/20">
+        <div class="max-w-6xl mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="serif-heading text-2xl font-bold gradient-text">Our Wishes</div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="index.html" class="hover:text-rose-gold transition-colors">Home</a>
+                    <a href="memories.html" class="hover:text-rose-gold transition-colors">Memories</a>
+                    <a href="wishes.html" class="text-rose-gold">Wishes</a>
+                    <a href="calendar.html" class="hover:text-rose-gold transition-colors">Future</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Header -->
+    <section class="pt-32 pb-16 px-6">
+        <div class="max-w-6xl mx-auto text-center">
+            <h1 class="serif-heading text-6xl md:text-8xl font-bold gradient-text mb-6">
+                Our Wish Jar
+            </h1>
+            <p class="text-xl md:text-2xl text-burgundy mb-8">
+                Dreams and hopes for our future together
+            </p>
+            <div class="wish-counter">
+                <span id="wishCounter">15</span> Beautiful Wishes Inside
+            </div>
+            <div class="handwriting text-2xl text-terracotta">
+                Click on each wish to read its message...
+            </div>
+        </div>
+    </section>
+
+    <!-- Wish Jar -->
+    <section class="py-16">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="wish-jar-container">
+                <img src="./resources/wish-jar.png" alt="Wish Jar" class="w-full h-full object-contain jar-glow">
+                
+                <!-- Wish papers will be generated by JavaScript -->
+                <div id="wishPapers"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Wish Categories -->
+    <section class="py-32 px-6 bg-white/30">
+        <div class="max-w-6xl mx-auto">
+            <div class="text-center mb-16 reveal">
+                <h2 class="serif-heading text-5xl font-bold gradient-text mb-8">Categories of Wishes</h2>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="reveal bg-white/60 rounded-2xl p-8 shadow-xl text-center">
+                    <div class="text-4xl mb-4">💕</div>
+                    <h3 class="serif-heading text-2xl font-bold gradient-text mb-4">Love & Happiness</h3>
+                    <p class="text-burgundy">Wishes for our continued love, joy, and emotional connection</p>
+                </div>
+                
+                <div class="reveal bg-white/60 rounded-2xl p-8 shadow-xl text-center">
+                    <div class="text-4xl mb-4">🌟</div>
+                    <h3 class="serif-heading text-2xl font-bold gradient-text mb-4">Health & Success</h3>
+                    <p class="text-burgundy">Wishes for your wellbeing, achievements, and personal growth</p>
+                </div>
+                
+                <div class="reveal bg-white/60 rounded-2xl p-8 shadow-xl text-center">
+                    <div class="text-4xl mb-4">🗺️</div>
+                    <h3 class="serif-heading text-2xl font-bold gradient-text mb-4">Adventures & Dreams</h3>
+                    <p class="text-burgundy">Wishes for our future travels, experiences, and shared goals</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Special Message -->
+    <section class="py-32 px-6">
+        <div class="max-w-4xl mx-auto text-center">
+            <div class="reveal bg-gradient-to-r from-rose-gold/20 to-terracotta/20 rounded-3xl p-12">
+                <h2 class="serif-heading text-5xl font-bold gradient-text mb-8">My Greatest Wish</h2>
+                <p class="handwriting text-2xl text-burgundy leading-relaxed mb-8">
+                    "Of all the wishes in this jar, the greatest one is to spend the rest of my life making all your dreams come true. You deserve every happiness, every joy, and every beautiful moment this world has to offer."
+                </p>
+                <div class="text-4xl mb-4">⭐💕</div>
+                <div class="serif-heading text-2xl font-bold gradient-text">
+                    Forever yours, always wishing for you
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Wish Modal -->
+    <div class="wish-modal" id="wishModal">
+        <div class="wish-modal-content">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="serif-heading text-2xl font-bold gradient-text" id="wishTitle"></h3>
+                <button class="text-2xl text-gray-500 hover:text-gray-700" id="closeModal">&times;</button>
+            </div>
+            <div class="handwriting text-lg text-burgundy leading-relaxed" id="wishMessage"></div>
+            <div class="mt-6 text-center">
+                <div class="text-2xl">💕</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="py-12 px-6 bg-charcoal text-cream">
+        <div class="max-w-6xl mx-auto text-center">
+            <div class="serif-heading text-2xl font-bold gradient-text mb-4">Dear Cupcake</div>
+            <p class="text-sm opacity-80">Made with love for someone very special</p>
+            <div class="mt-4 text-2xl">💝</div>
+        </div>
+    </footer>
+
+    <script>
+        // Wish data
+        const wishes = [
+            {
+                title: "Health & Happiness",
+                message: "My first wish is for your continued health and happiness. May you always feel as vibrant and joyful as you make me feel every single day.",
+                category: "Health & Success"
+            },
+            {
+                title: "Endless Laughter",
+                message: "I wish for us to share countless moments of laughter, silly jokes, and inside jokes that only we understand. Your laugh is my favorite sound.",
+                category: "Love & Happiness"
+            },
+            {
+                title: "Adventure Together",
+                message: "May we explore new places, try new experiences, and step out of our comfort zones together. Every adventure with you is magical.",
+                category: "Adventures & Dreams"
+            },
+            {
+                title: "Growing Stronger",
+                message: "I wish for our love to grow deeper and stronger with each passing day, weathering any storm and celebrating every sunshine together.",
+                category: "Love & Happiness"
+            },
+            {
+                title: "Your Dreams Come True",
+                message: "May every dream you've ever had come true. You deserve all the success, recognition, and fulfillment in the world.",
+                category: "Health & Success"
+            },
+            {
+                title: "Cozy Moments",
+                message: "I wish for endless cozy evenings together, wrapped in blankets, sharing stories, and creating our own little world.",
+                category: "Love & Happiness"
+            },
+            {
+                title: "Surprise Adventures",
+                message: "May I always find new ways to surprise you and make you smile. You deserve to be spoiled with love and unexpected joys.",
+                category: "Adventures & Dreams"
+            },
+            {
+                title: "Inner Peace",
+                message: "I wish for you to find complete peace within yourself, knowing how truly amazing and loved you are.",
+                category: "Health & Success"
+            },
+            {
+                title: "Dancing Together",
+                message: "May we dance through life together - sometimes literally, sometimes metaphorically - but always in step with each other's hearts.",
+                category: "Love & Happiness"
+            },
+            {
+                title: "New Experiences",
+                message: "I wish for us to try new hobbies, learn new skills, and grow together in ways we never imagined possible.",
+                category: "Adventures & Dreams"
+            },
+            {
+                title: "Unconditional Support",
+                message: "May I always be your biggest supporter, your safe harbor, and your partner in achieving everything you dream of.",
+                category: "Love & Happiness"
+            },
+            {
+                title: "Beautiful Sunrises",
+                message: "I wish for us to wake up together to watch many beautiful sunrises, each one reminding us of our fresh start together.",
+                category: "Adventures & Dreams"
+            },
+            {
+                title: "Your Smile Never Fades",
+                message: "May your beautiful smile never fade, and may you always find reasons to be as happy as you make me.",
+                category: "Health & Success"
+            },
+            {
+                title: "Hand in Hand",
+                message: "I wish to hold your hand through every joy, every challenge, and every ordinary moment that becomes extraordinary because we're together.",
+                category: "Love & Happiness"
+            },
+            {
+                title: "Forever Together",
+                message: "My greatest wish is to spend forever with you, creating a lifetime of memories, love, and happiness together.",
+                category: "Love & Happiness"
+            }
+        ];
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            generateWishPapers();
+            initScrollAnimations();
+            initModal();
+            startWishAnimation();
+        });
+
+        // Generate wish papers
+        function generateWishPapers() {
+            const container = document.getElementById('wishPapers');
+            const jarRect = document.querySelector('.wish-jar-container').getBoundingClientRect();
+            
+            wishes.forEach((wish, index) => {
+                const paper = document.createElement('div');
+                paper.className = 'wish-paper floating-wish';
+                paper.textContent = `Wish ${index + 1}`;
+                paper.style.background = getRandomColor();
+                
+                // Position randomly around the jar
+                const angle = (index / wishes.length) * 2 * Math.PI;
+                const radius = 150 + Math.random() * 100;
+                const x = Math.cos(angle) * radius + jarRect.width / 2 - 40;
+                const y = Math.sin(angle) * radius + jarRect.height / 2 - 30;
+                
+                paper.style.left = `${x}px`;
+                paper.style.top = `${y}px`;
+                paper.style.animationDelay = `${Math.random() * 2}s`;
+                
+                paper.addEventListener('click', () => {
+                    openWishModal(wish);
+                });
+                
+                container.appendChild(paper);
+            });
+        }
+
+        // Get random color for wish papers
+        function getRandomColor() {
+            const colors = [
+                'linear-gradient(135deg, #FFE5E5, #FFD1DC)',
+                'linear-gradient(135deg, #E5F3FF, #D1E7FF)',
+                'linear-gradient(135deg, #F0FFE5, #D1FFC1)',
+                'linear-gradient(135deg, #FFE5F7, #FFD1F3)',
+                'linear-gradient(135deg, #FFF5E5, #FFE8D1)',
+                'linear-gradient(135deg, #E5E5FF, #D1D1FF)',
+                'linear-gradient(135deg, #FFE8E5, #FFD1C1)'
+            ];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        // Open wish modal
+        function openWishModal(wish) {
+            const modal = document.getElementById('wishModal');
+            const title = document.getElementById('wishTitle');
+            const message = document.getElementById('wishMessage');
+            
+            title.textContent = wish.title;
+            message.textContent = wish.message;
+            
+            modal.classList.add('active');
+            
+            // Add animation
+            anime({
+                targets: '.wish-modal-content',
+                scale: [0.8, 1],
+                opacity: [0, 1],
+                duration: 300,
+                easing: 'easeOutBack'
+            });
+        }
+
+        // Initialize modal
+        function initModal() {
+            const modal = document.getElementById('wishModal');
+            const closeBtn = document.getElementById('closeModal');
+            
+            closeBtn.addEventListener('click', () => {
+                modal.classList.remove('active');
+            });
+            
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
+        }
+
+        // Start wish animation
+        function startWishAnimation() {
+            const papers = document.querySelectorAll('.wish-paper');
+            
+            papers.forEach((paper, index) => {
+                setTimeout(() => {
+                    paper.classList.add('visible');
+                    
+                    // Add floating animation
+                    anime({
+                        targets: paper,
+                        translateY: [30, 0],
+                        opacity: [0, 1],
+                        duration: 800,
+                        easing: 'easeOutQuart',
+                        complete: () => {
+                            // Add gentle floating
+                            anime({
+                                targets: paper,
+                                translateY: [-5, 5],
+                                duration: 2000 + Math.random() * 1000,
+                                direction: 'alternate',
+                                loop: true,
+                                easing: 'easeInOutSine'
+                            });
+                        }
+                    });
+                }, index * 100);
+            });
+            
+            // Update counter
+            let counter = 0;
+            const counterElement = document.getElementById('wishCounter');
+            const interval = setInterval(() => {
+                counter++;
+                counterElement.textContent = counter;
+                if (counter >= wishes.length) {
+                    clearInterval(interval);
+                }
+            }, 100);
+        }
+
+        // Scroll animations
+        function initScrollAnimations() {
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('active');
+                    }
+                });
+            }, observerOptions);
+
+            document.querySelectorAll('.reveal').forEach(el => {
+                observer.observe(el);
+            });
+        }
+
+        // Add some interactive effects
+        document.addEventListener('mousemove', (e) => {
+            const papers = document.querySelectorAll('.wish-paper');
+            papers.forEach(paper => {
+                const rect = paper.getBoundingClientRect();
+                const distance = Math.sqrt(
+                    Math.pow(e.clientX - (rect.left + rect.width / 2), 2) +
+                    Math.pow(e.clientY - (rect.top + rect.height / 2), 2)
+                );
+                
+                if (distance < 100) {
+                    const angle = Math.atan2(
+                        e.clientY - (rect.top + rect.height / 2),
+                        e.clientX - (rect.left + rect.width / 2)
+                    );
+                    const force = (100 - distance) / 100;
+                    const moveX = Math.cos(angle) * force * 10;
+                    const moveY = Math.sin(angle) * force * 10;
+                    
+                    paper.style.transform = `translate(${moveX}px, ${moveY}px) scale(1.1)`;
+                } else {
+                    paper.style.transform = '';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

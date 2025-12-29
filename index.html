@@ -1,323 +1,408 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<link rel="icon" href="icon.png" type="image/png">
-<title>New-Year Card ☕</title>
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
-<style>
-  :root{
-    --cream:#F9F6F1;
-    --latte:#D7C0A8;
-    --mocha:#8C5E46;
-    --espresso:#4A3728;
-    --heart:#E76F51;
-    --speed:1.2s;
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{
-    height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background:radial-gradient(circle at 50% 50%,var(--latte),var(--espresso));
-    font-family:'Georgia',serif;
-    color:var(--espresso);
-    overflow:hidden;
-    perspective:1200px;
-  }
-  .card{
-    width:min(90vw,320px);
-    height:min(80vh,420px);
-    position:relative;
-    transform-style:preserve-3d;
-    transition:transform var(--speed) cubic-bezier(.68,-0.55,.27,1.55);
-    cursor:pointer;
-  }
-  .card.unfolded{transform:rotateY(180deg);}
-  .face{
-    position:absolute;
-    inset:0;
-    backface-visibility:hidden;
-    background:var(--cream);
-    border-radius:18px;
-    box-shadow:0 20px 40px rgba(0,0,0,.25);
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    justify-content:center;
-    padding:25px;
-    text-align:center;
-  }
-  .face.back{transform:rotateY(180deg);}
-  .steam{
-    position:absolute;
-    top:-60px;
-    left:50%;
-    transform:translateX(-50%);
-    width:120px;
-    height:120px;
-  }
-  .steam span{
-    position:absolute;
-    bottom:0;
-    width:50px;
-    height:50px;
-    background:rgba(255,255,255,.35);
-    border-radius:50%;
-    filter:blur(12px);
-    animation:steam 4s infinite ease-out;
-  }
-  .steam span:nth-child(1){left:0;animation-delay:0s;}
-  .steam span:nth-child(2){left:35px;animation-delay=.8s;}
-  .steam span:nth-child(3){left:70px;animation-delay=1.6s;}
-  @keyframes steam{
-    0%{transform:translateY(0) scale(.6);opacity:0;}
-    15%{opacity:1;}
-    100%{transform:translateY(-120px) scale(1.8);opacity:0;}
-  }
-  button{
-    background:var(--mocha);
-    color:var(--cream);
-    border:none;
-    padding:10px 22px;
-    margin:8px;
-    border-radius:25px;
-    font-size:clamp(14px,2.5vw,16px);
-    cursor:pointer;
-    transition:.3s;
-  }
-  button:hover{background:var(--espresso);transform:scale(1.05);}
-  .hidden{display:none!important;}
-  .page{animation:pop .6s cubic-bezier(.34,1.56,.64,1);}
-  @keyframes pop{0%{opacity:0;transform:scale(.9);}100%{opacity:1;transform:scale(1);}}
-  .meme{
-    width:90px;
-    height:90px;
-    object-fit:cover;
-    border-radius:10px;
-    margin:10px 0;
-    box-shadow:0 4px 10px rgba(0,0,0,.15);
-  }
-  .letter{
-    max-height:260px;
-    overflow-y:auto;
-    padding-right:8px;
-    font-size:clamp(13px,2.2vw,15px);
-    line-height:1.55;
-    text-align:left;
-    animation:fadeIn .8s forwards;
-    opacity:0;
-  }
-  .letter::-webkit-scrollbar{width:6px}
-  .letter::-webkit-scrollbar-thumb{background:var(--mocha);border-radius:4px}
-  .letter b{color:var(--mocha)}
-  @keyframes fadeIn{to{opacity:1}}
-  .flashText{
-    font-size:clamp(22px,4.5vw,28px);
-    font-weight:bold;
-    color:var(--mocha);
-    animation:flash 1s forwards;
-  }
-  @keyframes flash{
-    0%{opacity:0;transform:scale(.8);}
-    50%{opacity:1;transform:scale(1);}
-    99%{opacity:1;}
-    100%{opacity:0;pointer-events:none;}
-  }
-  .heart{
-    position:absolute;
-    width:20px;
-    height:20px;
-    background:var(--heart);
-    transform:rotate(45deg);
-    opacity:.8;
-    animation:float 12s infinite linear;
-  }
-  .heart::before,.heart::after{
-    content:'';position:absolute;width:20px;height:20px;
-    background:var(--heart);border-radius:50%;
-  }
-  .heart::before{top:-10px;left:0;}
-  .heart::after{left:-10px;top:0;}
-  @keyframes float{
-    0%{transform:translateY(110vh) rotate(45deg) scale(.8);}
-    100%{transform:translateY(-10vh) rotate(45deg) scale(1.2);}
-  }
-  .particle{
-    position:absolute;width:4px;height:4px;
-    background:rgba(255,255,255,.6);border-radius:50%;
-    pointer-events:none;animation:drift 20s infinite linear;
-  }
-  @keyframes drift{
-    0%{transform:translateY(110vh) translateX(0);}
-    100%{transform:translateY(-10vh) translateX(60px);}
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dear Cupcake - A New Year Wish</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.12/typed.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/js/splide.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.7.0/p5.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500&family=Dancing+Script:wght@400;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --cream: #F8F6F0;
+            --blush: #F4E6E1;
+            --rose-gold: #D4A574;
+            --terracotta: #C8956D;
+            --charcoal: #2C2C2C;
+            --burgundy: #6B3E3E;
+            --sage: #A8B5A0;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--cream) 0%, var(--blush) 100%);
+            font-family: 'Inter', sans-serif;
+            color: var(--charcoal);
+            overflow-x: hidden;
+        }
+        
+        .hero-bg {
+            background-image: url('./resources/hero-bg.jpg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(135deg, var(--rose-gold), var(--terracotta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .glass-effect {
+            backdrop-filter: blur(10px);
+            background: rgba(248, 246, 240, 0.8);
+            border: 1px solid rgba(212, 165, 116, 0.2);
+        }
+        
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .floating {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        
+        .typewriter {
+            border-right: 2px solid var(--rose-gold);
+            animation: blink 1s infinite;
+        }
+        
+        @keyframes blink {
+            0%, 50% { border-color: var(--rose-gold); }
+            51%, 100% { border-color: transparent; }
+        }
+        
+        .polaroid {
+            background: white;
+            padding: 12px 12px 40px 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            transform: rotate(-2deg);
+            transition: all 0.3s ease;
+        }
+        
+        .polaroid:hover {
+            transform: rotate(0deg) scale(1.05);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+        }
+        
+        .particle-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        .content-layer {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .nav-blur {
+            backdrop-filter: blur(20px);
+            background: rgba(248, 246, 240, 0.9);
+        }
+        
+        .memory-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        .memory-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 16px 48px rgba(0,0,0,0.15);
+        }
+        
+        .wish-preview {
+            background: linear-gradient(135deg, rgba(212, 165, 116, 0.1), rgba(200, 149, 109, 0.1));
+            border: 2px dashed var(--rose-gold);
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .wish-preview:hover {
+            background: linear-gradient(135deg, rgba(212, 165, 116, 0.2), rgba(200, 149, 109, 0.2));
+            border-color: var(--terracotta);
+        }
+        
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+        }
+        
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .calendar-day:hover {
+            background: var(--rose-gold);
+            color: white;
+            transform: scale(1.1);
+        }
+        
+        .special-day {
+            background: linear-gradient(135deg, var(--rose-gold), var(--terracotta));
+            color: white;
+            font-weight: 600;
+        }
+        
+        .handwriting {
+            font-family: 'Dancing Script', cursive;
+        }
+        
+        .serif-heading {
+            font-family: 'Playfair Display', serif;
+        }
+        
+        @media (max-width: 768px) {
+            .hero-bg {
+                background-attachment: scroll;
+            }
+        }
+    </style>
 </head>
 <body>
-<div class="heart" style="left:10%;animation-delay:0s;"></div>
-<div class="heart" style="left:30%;animation-delay:3s;"></div>
-<div class="heart" style="left:50%;animation-delay:6s;"></div>
-<div class="heart" style="left:70%;animation-delay:9s;"></div>
-<div class="heart" style="left:90%;animation-delay:4s;"></div>
-<div class="particle" style="left:15%;animation-delay:0s;"></div>
-<div class="particle" style="left:35%;animation-delay:5s;"></div>
-<div class="particle" style="left:55%;animation-delay:10s;"></div>
-<div class="particle" style="left:75%;animation-delay:15s;"></div>
-<div class="particle" style="left:85%;animation-delay:8s;"></div>
-
-<div class="card" id="card">
-  <div class="face front">
-    <div class="steam"><span></span><span></span><span></span></div>
-    <h2>Happy New Year!</h2>
-    <p>Guess the year's about to end!!!</p>
-    <button onclick="next()">Yes</button>
-  </div>
-  <div class="face back">
-    <div id="pages">
-      <!-- 1  love-meter question  -->
-      <div id="p1" class="page">
-        <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExemVldXFmb3g1MmJ5Z3Jta2pyd2RtYTEwM2NwOXYxcGM2aWZ3ampqMCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/hECJDGJs4hQjjWLqRV/giphy.gif"
-             class="meme" alt="love meme">
-        <p>I was wondering…<br>Did you love me this year as much as I did?</p>
-        <button onclick="go('p-yes-follow')">Yes</button>
-        <button onclick="go('p2-no')">No, I loved you more</button>
-      </div>
-
-      <!-- 2  "yes" follow-up  -->
-      <div id="p-yes-follow" class="page hidden">
-        <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaDdhMGkwMnFtNjdicHpmOHdyb2ZmdnUyMGt6ZzFsNjh4dml3ejFnYiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/7AzEXdIb1wyCTWJntb/giphy.gif"
-             class="meme" alt="love more">
-        <p>So you don't love me more?</p>
-        <button onclick="flashYes()">Yes</button>
-        <button onclick="flashNo()">No</button>
-      </div>
-
-      <!-- 3  flash "That's what I thought"  -->
-      <div id="p-thought" class="page hidden">
-        <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdTY1bmZkajA3bTdhNzhibmlsN2xob2Y0OGg5YndhaHhoODl4ejdobiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/91BCkba1STSmzb4UWK/giphy.gif"
-             class="meme" alt="thought">
-        <div class="flashText">That's what I thought</div>
-      </div>
-
-      <!-- 4  flash "Meanie"  -->
-      <div id="p-meanie" class="page hidden">
-        <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaDdhMGkwMnFtNjdicHpmOHdyb2ZmdnUyMGt6ZzFsNjh4dml3ejFnYiZlcD12MV9naWZzX3NlYXJjaCZjdD1n/N92tr5rzjZx7wnRKiy/giphy.gif"
-             class="meme" alt="meanie">
-        <div class="flashText">Meanie</div>
-      </div>
-
-      <!-- 5  original "No, I loved you more" branch  -->
-      <div id="p2-no" class="page hidden">
-        <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNXA3NDVhNzJibDNzNjJuZ2VqYXNpc3dvaDk3YzVqeXVxbnM3aWJiNCZlcD12MV9naWZzX3NlYXJjaCZjdD1n/xn8xD14FtUGQgXxST5/giphy.gif"
-             class="meme" alt="silly">
-        <p>HEHEHHE! Don’t be silly, that’s not possible.</p>
-        <button onclick="go('p2-no-1')">Understood T_T</button>
-        <button onclick="go('p2-no-2')">No, I really do</button>
-      </div>
-      <div id="p2-no-1" class="page hidden">
-        <!-- SINGLE GOOD-GIRL MEME -->
-        <img id="ggMeme" src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExMjNucXBlYnI0d25kaGViMWtrZHBnMmxvdWk2MGs2bDBxZ3prZ3lxMyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/W1hd3uXRIbddu/giphy.gif"
-             class="meme" alt="good girl">
-        <div id="goodGirlFlash" class="flashText">Good Girl!</div>
-      </div>
-      <div id="p2-no-2" class="page hidden">
-        <img src="https://media.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3c3hrN3Y2b3RzMHFveGNneGNhNm02dWYxbDdzM2Z4aGE1Z3VkM3N0MSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/uxvy34OClDQRKx1rGm/giphy.gif"
-             class="meme" alt="mic drop">
-        <p>I said what I said.</p>
-        <button onclick="go('p3')">Ok</button>
-      </div>
-
-      <!-- 6  renewal question  -->
-      <div id="p3" class="page hidden">
-        <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaHF1MnFpNHZncDduaHRsNGt4N2hjcTV0eDFoNzlxcXh3MGx4MGlmYyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/Sm9AfJRiZofjlrkAAl/giphy.gif"
-             class="meme" alt="renew">
-        <p>Would you like to renew our relationship?</p>
-        <button onclick="showFinal()">Yes</button>
-        <button onclick="go('p3-double')">No</button>
-      </div>
-      <div id="p3-double" class="page hidden">
-        <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExaHF1MnFpNHZncDduaHRsNGt4N2hjcTV0eDFoNzlxcXh3MGx4MGlmYyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/901mxGLGQN2PyCQpoc/giphy.gif"
-             class="meme" alt="sure?">
-        <p>Did I hear that right? Your hand might’ve slipped.<br>I’ll ask again:</p>
-        <button onclick="showFinal()">Yes</button>
-        <button onclick="showFinal()">Yes?</button>
-      </div>
-
-      <!-- NEW: "It was that easy?" beat before final letter -->
-      <div id="p-easy" class="page hidden">
-        <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExMGt1aTh0eWJodmcydTdpZ3dsanYxMjI4cmx6bXM3MjRyYjZ3ZHpnayZlcD12MV9naWZzX3NlYXJjaCZjdD1n/ZQOK8SFetn75GK9HEi/giphy.gif"
-             class="meme" alt="easy">
-        <p>It was that easy?</p>
-      </div>
-
-      <!-- 7  final letter  -->
-      <div id="final" class="page hidden">
-        <div id="goodGirl" class="goodGirl">Good Girl!</div>
-        <div id="letter" class="letter hidden">
-          <p><b>Happy New Year to my lovely little cupcake!</b></p>
-          <p>Thank you for standing by my side through everything—you aren't just a part of my world, you <i>are</i> my world.</p>
-          <p>I know I can be a bit much sometimes—difficult, weird, or just a lot to handle—but you love me through it all with a patience I don't deserve but cherish deeply.</p>
-          <p>You are brave, kind, beautiful, smart, and delightfully silly. But my favorite thing about you? You are <i>mine</i>.</p>
-          <p>My wish for us this year is simple: more laughter, deeper love, and the strength to face whatever comes our way, hand in hand. No matter the obstacle, we rise above it together.</p>
-          <p>I want to spend this year holding you close, spoiling you endlessly, and making sure you feel every single ounce of the love you truly deserve.</p>
-          <p>We’re walking into this new year with so much potential, and I am so incredibly lucky that I get to share this journey with <b>you</b>.</p>
-          <p>I love you.</p>
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 right-0 z-50 nav-blur border-b border-rose-gold/20">
+        <div class="max-w-6xl mx-auto px-6 py-4">
+            <div class="flex justify-between items-center">
+                <div class="serif-heading text-2xl font-bold gradient-text">Dear Cupcake</div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="#home" class="hover:text-rose-gold transition-colors">Home</a>
+                    <a href="memories.html" class="hover:text-rose-gold transition-colors">Memories</a>
+                    <a href="wishes.html" class="hover:text-rose-gold transition-colors">Wishes</a>
+                    <a href="calendar.html" class="hover:text-rose-gold transition-colors">Future</a>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  </div>
-</div>
+    </nav>
 
-<audio id="bg" loop>
-  <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmFgU7k9n1unEiBC13yO/eizEIHWq+8+OWT" type="audio/wav">
-</audio>
+    <!-- Hero Section -->
+    <section id="home" class="relative min-h-screen hero-bg flex items-center justify-center">
+        <div id="particles" class="particle-canvas"></div>
+        <div class="content-layer text-center px-6 max-w-4xl mx-auto">
+            <div class="glass-effect rounded-3xl p-12 floating">
+                <h1 class="serif-heading text-6xl md:text-8xl font-bold gradient-text mb-6">
+                    <span id="typed-text"></span>
+                </h1>
+                <p class="text-xl md:text-2xl text-burgundy mb-8 opacity-90">
+                    A love letter to welcome 2025
+                </p>
+                <div class="handwriting text-2xl text-terracotta">
+                    Scroll to begin our story...
+                </div>
+            </div>
+        </div>
+    </section>
 
-<script>
-const card   = document.getElementById('card');
-const pages  = document.getElementById('pages');
-const bg     = document.getElementById('bg');
-const goodGirl = document.getElementById('goodGirl');
-const letter   = document.getElementById('letter');
+    <!-- Opening Letter -->
+    <section class="py-32 px-6">
+        <div class="max-w-4xl mx-auto">
+            <div class="reveal text-center mb-16">
+                <h2 class="serif-heading text-5xl font-bold gradient-text mb-8">My Dearest Cupcake</h2>
+                <div class="bg-white/50 rounded-2xl p-12 shadow-xl">
+                    <div class="handwriting text-2xl text-burgundy leading-relaxed space-y-6">
+                        <p class="reveal">As the clock strikes midnight and we welcome 2025, I find myself overwhelmed with gratitude for having you in my life.</p>
+                        
+                        <p class="reveal">This past year has been filled with countless moments of joy, laughter, and love - all because of you. From our spontaneous adventures to our quiet evenings together, every moment has been precious.</p>
+                        
+                        <p class="reveal">As we step into this new year, I want you to know that my love for you grows stronger with each passing day. You are my sunshine, my anchor, and my greatest blessing.</p>
+                        
+                        <p class="reveal">May this new year bring us even closer together, filled with new adventures, deeper understanding, and endless love.</p>
+                        
+                        <div class="text-center mt-12">
+                            <img src="./resources/signature.png" alt="Signature" class="inline-block max-w-xs opacity-80">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-function next(){
-  card.classList.add('unfolded');
-}
-function go(id){
-  pages.querySelectorAll('.page').forEach(p=>p.classList.add('hidden'));
-  document.getElementById(id).classList.remove('hidden');
-  if (id==='p2-no-1') autoGG();
-}
-function autoGG(){
-  setTimeout(()=>{
-    document.getElementById('ggMeme').src = 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExMjNucXBlYnI0d25kaGViMWtrZHBnMmxvdWk2MGs2bDBxZ3prZ3lxMyZlcD12MV9naWZzX3NlYXJjaCZjdD1n/W1hd3uXRIbddu/giphy.gif';
-    document.getElementById('goodGirlFlash').classList.remove('hidden');
-  },700);
-  setTimeout(()=>go('p3'),1800);
-}
-function flashYes(){
-  go('p-thought');
-  setTimeout(()=>go('p3'),1400);
-}
-function flashNo(){
-  go('p-meanie');
-  setTimeout(()=>go('p3'),1400);
-}
-function showFinal(){
-  go('p-easy');                       // NEW: show "It was that easy?"
-  setTimeout(()=>{                    // after 1.4 s jump to final letter
-    go('final');
-    bg.volume = .25;
-    bg.play().catch(()=>{});
-    goodGirl.addEventListener('animationend', revealLetter, {once:true});
-    setTimeout(revealLetter, 1200);
-  }, 1400);
-}
-function revealLetter(){
-  goodGirl.style.display = 'none';
-  letter.classList.remove('hidden');
-}
-</script>
+    <!-- Memory Highlights -->
+    <section class="py-32 px-6 bg-white/30">
+        <div class="max-w-6xl mx-auto">
+            <div class="reveal text-center mb-16">
+                <h2 class="serif-heading text-5xl font-bold gradient-text mb-8">Our Beautiful Journey</h2>
+                <p class="text-xl text-burgundy">Every moment with you is a treasure</p>
+            </div>
+            
+            <div class="splide" id="memory-carousel">
+                <div class="splide__track">
+                    <ul class="splide__list">
+                        <li class="splide__slide">
+                            <div class="polaroid mx-auto max-w-sm">
+                                <img src="./resources/couple-1.jpg" alt="Our first date" class="w-full h-64 object-cover">
+                                <div class="p-4 handwriting text-lg text-center text-burgundy">Our magical first date</div>
+                            </div>
+                        </li>
+                        <li class="splide__slide">
+                            <div class="polaroid mx-auto max-w-sm">
+                                <img src="./resources/couple-2.jpg" alt="Beach sunset" class="w-full h-64 object-cover">
+                                <div class="p-4 handwriting text-lg text-center text-burgundy">Sunset walks together</div>
+                            </div>
+                        </li>
+                        <li class="splide__slide">
+                            <div class="polaroid mx-auto max-w-sm">
+                                <img src="./resources/couple-3.jpg" alt="Romantic picnic" class="w-full h-64 object-cover">
+                                <div class="p-4 handwriting text-lg text-center text-burgundy">Our cozy picnics</div>
+                            </div>
+                        </li>
+                        <li class="splide__slide">
+                            <div class="polaroid mx-auto max-w-sm">
+                                <img src="./resources/couple-1.jpg" alt="Dancing together" class="w-full h-64 object-cover">
+                                <div class="p-4 handwriting text-lg text-center text-burgundy">Dancing under the stars</div>
+                            </div>
+                        </li>
+                        <li class="splide__slide">
+                            <div class="polaroid mx-auto max-w-sm">
+                                <img src="./resources/couple-2.jpg" alt="Cozy moments" class="w-full h-64 object-cover">
+                                <div class="p-4 handwriting text-lg text-center text-burgundy">Cuddles and warmth</div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="text-center mt-12">
+                <a href="memories.html" class="inline-block bg-gradient-to-r from-rose-gold to-terracotta text-white px-8 py-4 rounded-full text-lg font-semibold hover:shadow-lg transition-all transform hover:scale-105">
+                    Explore Our Timeline
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Wish Preview -->
+    <section class="py-32 px-6">
+        <div class="max-w-6xl mx-auto">
+            <div class="reveal text-center mb-16">
+                <h2 class="serif-heading text-5xl font-bold gradient-text mb-8">Wishes for Our Future</h2>
+                <p class="text-xl text-burgundy">Every wish is filled with love and hope</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div class="reveal">
+                    <div class="wish-preview p-8">
+                        <img src="./resources/wish-jar.png" alt="Wish Jar" class="w-full max-w-md mx-auto floating">
+                    </div>
+                </div>
+                
+                <div class="reveal space-y-6">
+                    <div class="bg-white/60 rounded-xl p-6 shadow-lg">
+                        <h3 class="handwriting text-2xl text-burgundy mb-2">Health & Happiness</h3>
+                        <p class="text-charcoal">May you always be healthy, happy, and surrounded by love.</p>
+                    </div>
+                    
+                    <div class="bg-white/60 rounded-xl p-6 shadow-lg">
+                        <h3 class="handwriting text-2xl text-burgundy mb-2">Adventures Together</h3>
+                        <p class="text-charcoal">Let's explore new places, try new things, and create beautiful memories.</p>
+                    </div>
+                    
+                    <div class="bg-white/60 rounded-xl p-6 shadow-lg">
+                        <h3 class="handwriting text-2xl text-burgundy mb-2">Growing Stronger</h3>
+                        <p class="text-charcoal">May our love continue to grow deeper and stronger with each passing day.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-12">
+                <a href="wishes.html" class="inline-block bg-gradient-to-r from-rose-gold to-terracotta text-white px-8 py-4 rounded-full text-lg font-semibold hover:shadow-lg transition-all transform hover:scale-105">
+                    Open Our Wish Jar
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Future Promise -->
+    <section class="py-32 px-6 bg-white/30">
+        <div class="max-w-6xl mx-auto">
+            <div class="reveal text-center mb-16">
+                <h2 class="serif-heading text-5xl font-bold gradient-text mb-8">Our 2025 Adventure</h2>
+                <p class="text-xl text-burgundy">Exciting moments waiting to unfold</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8 mb-12">
+                <div class="calendar-day special-day reveal">
+                    <div class="text-center">
+                        <div class="text-2xl font-bold">14</div>
+                        <div class="text-sm">Feb</div>
+                    </div>
+                </div>
+                <div class="calendar-day special-day reveal">
+                    <div class="text-center">
+                        <div class="text-2xl font-bold">20</div>
+                        <div class="text-sm">Mar</div>
+                    </div>
+                </div>
+                <div class="calendar-day special-day reveal">
+                    <div class="text-center">
+                        <div class="text-2xl font-bold">25</div>
+                        <div class="text-sm">Dec</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="reveal bg-white/60 rounded-2xl p-8 shadow-xl text-center">
+                <h3 class="serif-heading text-3xl font-bold gradient-text mb-4">Valentine's Day Getaway</h3>
+                <p class="text-lg text-burgundy mb-6">A romantic weekend escape to the mountains, just for us.</p>
+                <div class="handwriting text-xl text-terracotta">I can't wait to celebrate our love in such a beautiful setting!</div>
+            </div>
+            
+            <div class="text-center mt-12">
+                <a href="calendar.html" class="inline-block bg-gradient-to-r from-rose-gold to-terracotta text-white px-8 py-4 rounded-full text-lg font-semibold hover:shadow-lg transition-all transform hover:scale-105">
+                    See Our Full Calendar
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Closing Message -->
+    <section class="py-32 px-6">
+        <div class="max-w-4xl mx-auto text-center">
+            <div class="reveal">
+                <h2 class="serif-heading text-6xl font-bold gradient-text mb-8">Forever Yours</h2>
+                <div class="bg-gradient-to-r from-rose-gold/20 to-terracotta/20 rounded-3xl p-12">
+                    <p class="handwriting text-3xl text-burgundy leading-relaxed mb-8">
+                        "In you, I've found my home, my heart, and my forever. Here's to another year of loving you more than words can express."
+                    </p>
+                    <div class="text-4xl mb-4">💕</div>
+                    <div class="serif-heading text-2xl font-bold gradient-text">
+                        Happy New Year, My Love
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-12 px-6 bg-charcoal text-cream">
+        <div class="max-w-6xl mx-auto text-center">
+            <div class="serif-heading text-2xl font-bold gradient-text mb-4">Dear Cupcake</div>
+            <p class="text-sm opacity-80">Made with love for someone very special</p>
+            <div class="mt-4 text-2xl">💝</div>
+        </div>
+    </footer>
+
+    <script src="main.js"></script>
 </body>
 </html>
